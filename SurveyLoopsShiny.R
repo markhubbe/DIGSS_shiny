@@ -1,4 +1,4 @@
-#' Survey Loops
+#' Survey Loops - SHINY version
 #'
 #' Perform multiple survey simulations changing values on one variable and plot the results
 #'
@@ -42,7 +42,7 @@
 #'
 #' @export
 
-SurveyLoops<-function(SurveyParameters,LoopVariable,LoopSequence,grid_ratio=NULL){
+surveyLoops<-function(SurveyParameters,LoopVariable,LoopSequence,grid_ratio=NULL){
 
   #1.we do a series of tests to allow for partial text matching and checking for errors
 
@@ -177,7 +177,7 @@ SurveyLoops<-function(SurveyParameters,LoopVariable,LoopSequence,grid_ratio=NULL
 
     #4.Here we call the SurveySim and run the loop iteration
     
-    tmp.results<-SurveySimShiny(tmp.SurveyParameters,plot=FALSE, grid_ratio = grid_ratio[a])
+    tmp.results<-surveySimShiny(tmp.SurveyParameters,plot=FALSE, grid_ratio = grid_ratio[a])
 
     results[[1]][a,2]<-tmp.results[[1]][1,2]
     results[[2]][a,2:7]<-tmp.results[[1]][2,2:7]
