@@ -4,7 +4,7 @@
     Help and walkthroughs are also available in the DIGSS vignette, accessible inside R or <a href="DIGSS.html" target="_blank" >here</a>.
 <p>DIGSS can be run as a package directly in R. You can install it following:</p>
 <code>devtools::install_github("markhubbe/DIGSS")</code>
-<p>The package in R will give you more flexibility when running multiple simulations and further analyzing the results, however the interface is
+<p>The package in R gives more flexibility when running multiple simulations and further analyzing the results, however the interface is
     much more cumbersome </p>
 
 <hr style="border-top: 5px solid #bbb;border-radius: 3px">
@@ -17,15 +17,18 @@
 <hr style="border-top: 5px solid #bbb;border-radius: 3px">
 
 <p>To run DIGSS, simply input the parameters for the simulation and press the Run DIGSS button.
-    The Survey Loop allows you to run multiple sequential simulations. 
-    <b>Soon DIGSS will be able to save results!</b> </p>
+    The Survey Loop allows you to run multiple sequential simulations. </p>
 
+<p><b>Soon DIGSS will be able to save results!</b> </p>
 
-    <h2> Multiple Users or intense simulations</h2>
-    <p><bold>A note for users interested in suing this vesrion of DIGSS with students or for those with extremelly large simulation goals:</bold></p>
-    <p>shiny.apps have a limited ammount of memmory allocated to DIGSS, which means that multiple simultaneous users can cause the page to freeze.</p>
+<hr style="border-top: 5px solid #bbb;border-radius: 3px">
+
+<h3> Warning for multiple users or intense simulations</h3>
+    <p><bold>A note for users interested in using this version of DIGSS with multiple students simultaneously or for those with extremelly large simulation goals:</bold></p>
+    <p>The shiny.apps server has a limited ammount of memmory allocated to DIGSS, which means that multiple simultaneous users will cause the page to freeze.</p>
     <p> If you are planning on sharing this with multiple users 
-    (e.g., in a classroom) or have very ambitious simulation goals, you can download the latest version of DIGSS_shiny as zip file <a href="DIGSS.html" target="_blank" >here</a> to load it in RStudio, 
-    or run it from github:</p>
+    (e.g., in a classroom) or have very ambitious simulation goals, you can download the latest version of DIGSS_shiny as a <a href="DIGSS.zip" target="_blank" >zip</a> file to load it in RStudio 
+    (unzip folder, open app.R in RStudio, and run app from there), 
+    or run it directly from github:</p>
     <code>shiny::runGitHub('DIGSS_shiny', 'markhubbe')</code>
 
