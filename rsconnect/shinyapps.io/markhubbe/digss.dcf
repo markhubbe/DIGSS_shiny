@@ -5,6 +5,7 @@ account: markhubbe
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 3653193
-bundleId: 4301831
+bundleId: 4905106
 url: https://markhubbe.shinyapps.io/digss/
-when: 1614890633.9403
+when: 1628538887.42026
+lastSyncTime: 1628538887.42026

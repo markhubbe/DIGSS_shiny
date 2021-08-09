@@ -358,7 +358,8 @@ ui <- fluidPage(
       tabsetPanel(type = "tabs", id = "result_tabs",
                   tabPanel("Welcome",
                            htmlOutput("welcome")),
-                  tabPanel("Sim Results", 
+                  tabPanel("Sim Results",
+                           actionButton("dwld_table","Download Results"),
                            tags$table(border=0, style = "width:100%",
                                       
                                       tags$tbody(align = "left",
@@ -374,7 +375,7 @@ ui <- fluidPage(
                            plotOutput("summary_plot")
                   ),
                   tabPanel("Loop Results", 
-                           
+                           actionButton("dwld_table_loop","Download Results"),
                            h2(textOutput("loop_txt")),
                            tableOutput("loop_summary"),
                            plotOutput("loop_result_plot"),
@@ -386,6 +387,10 @@ ui <- fluidPage(
 )
 # Define server: session is required to update text labels
 server <- function(input, output, session) {
+  #lock dowload options unless results exist
+  shinyjs::disable("dwld_table")
+  shinyjs::disable("dwld_table_loop")
+ 
   #lock plot options unless results exist
   shinyjs::disable("summ_plot")
   shinyjs::disable("sims_to_plot")
@@ -608,7 +613,6 @@ server <- function(input, output, session) {
   })
   
   observeEvent(input$ok,{
-    #output$test<-renderText(input$grid_ratio)
     removeModal()
   })
   
@@ -622,7 +626,7 @@ server <- function(input, output, session) {
     results_labels[sims_done]<<-input$simm_label
     updateTextInput(session,"simm_label",value=paste("Simulation",(sims_done+1)))
     updateSelectInput(session, "sims_to_plot",selected = input$simm_label, choices=results_labels)
-    
+
     #run survey sim
     survey_results<-surveySimShiny(SurveyParameters, artifact.analysis=TRUE, plot=TRUE, 
                                    plot.artifacts=ifelse(input$plot_artifact==TRUE,TRUE,FALSE),areaprecision=1000, grid_ratio=input$grid_ratio)
@@ -687,6 +691,9 @@ server <- function(input, output, session) {
     shinyjs::enable("summ_plot")
     shinyjs::enable("sims_to_plot")
     
+    #enable download buttons
+    shinyjs::enable("dwld_table")
+   
     #select the right navbar
     updateTabsetPanel(session, "result_tabs", selected = "Sim Results")
     
@@ -717,7 +724,11 @@ server <- function(input, output, session) {
   #run loops
   observeEvent(input$loop_run,{
     
+    #enable plot button
     shinyjs::enable("loop_plot")
+    
+    #enable download buttons
+    shinyjs::enable("dwld_table_loop")
     
     SurveyParameters<-load_parameters()
      
@@ -906,6 +917,7 @@ server <- function(input, output, session) {
     grid_ratio_loop(SurveyParGE,loop_varGE,loop_parsGE)
   })
   
+  #Control the plot to show in results 
   observeEvent(input$loop_plot,{
     if(is.null(loop_results)==FALSE){
       line_palette<-viridis(5)
@@ -1001,8 +1013,77 @@ server <- function(input, output, session) {
     }
   })
   
-  #function to load parameters
+  #Download results
+  observeEvent(input$dwld_table,{
+    showModal(modalDialog(
+      selectInput("sim_to_save","Select simulation to download:",selected = input$simm_label, choices=results_labels),
+      selectInput("table_to_save","Select data to download:",selected = "Summary", choices=c("Summary","By Site","By Artifact")),
+      size="m",
+        
+      footer = tagList(
+        downloadButton("dwld", "Download"),
+        modalButton("DONE")
+      )
+    )
+    )
+  })
   
+  observeEvent(input$sim_to_save,{
+    result_to_save<-which(input$sim_to_save==results_labels)
+    tbl_to_save<-which(input$table_to_save==c("Summary","By Site","By Artifact"))
+   
+    output$dwld <- downloadHandler(
+      filename = function() {
+        paste0(input$sim_to_save,"_",input$table_to_save, ".csv")
+      },
+      content = function(file) {
+        write.csv(results[[result_to_save]][tbl_to_save], file)
+      }
+    )
+  })
+  
+  observeEvent(input$table_to_save,{
+    result_to_save<-which(input$sim_to_save==results_labels)
+    tbl_to_save<-which(input$table_to_save==c("Summary","By Site","By Artifact"))
+   
+     output$dwld <- downloadHandler(
+      filename = function() {
+        paste0(input$sim_to_save,"_",input$table_to_save, ".csv")
+      },
+      content = function(file) {
+        write.csv(results[[result_to_save]][tbl_to_save], file)
+      }
+    )
+  })
+ 
+  #Download loop results
+  observeEvent(input$dwld_table_loop,{
+    showModal(modalDialog(
+      selectInput("table_to_save_loop","Select data to download:",selected = "Sites found", choices=c("Total surveys","Sites found","Sites found - artifacts","Artifacts found", "Success Rate Index")),
+      size="m",
+      
+      footer = tagList(
+        downloadButton("dwld_loop", "Download"),
+        modalButton("DONE")
+      )
+    )
+    )
+  })
+  
+  observeEvent(input$table_to_save_loop,{
+    tbl_to_save<-which(input$table_to_save_loop==c("Total surveys","Sites found","Sites found - artifacts","Artifacts found", "Success Rate Index"))
+    
+    output$dwld_loop <- downloadHandler(
+      filename = function() {
+        paste0("Loop_",input$table_to_save_loop, ".csv")
+      },
+      content = function(file) {
+        write.csv(loop_results[tbl_to_save], file)
+      }
+    )
+  })
+  
+  #function to load parameters
   load_parameters<-function(){
     #create the data
     if(input$dens_choice == "single value"){
