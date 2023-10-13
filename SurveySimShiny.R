@@ -98,7 +98,7 @@ surveySimShiny<-function(SurveyParameters, artifact.analysis=TRUE, plot=TRUE, pl
   yseq<-yseq+(Area[2]-max(yseq))/2
   
   #i.this is the object that will store final summary stats
-  SurveySummary<-list("Summary"=data.frame(matrix(NA,5,7)),
+  SurveySummary<-list("Summary"=data.frame(matrix(NA,6,7)),
                       "BySite"=matrix(0,simulations,10),
                       "ByArtifact"=matrix(NA,simulations,7),
                       "Parameters"=list("col.width"=col.width,
@@ -114,7 +114,7 @@ surveySimShiny<-function(SurveyParameters, artifact.analysis=TRUE, plot=TRUE, pl
                                         "plot"=NULL)
   
   colnames(SurveySummary$Summary)<-c("Observed values","Mean","StDev","Min","Max","Quantile 2.5%","Quantile 97.5%")
-  SurveySummary$Summary[,1]<-c("Surveys per simulation","% of sites found","% of sites found on artifacts","Artifacts per survey","Success Rate Index")
+  SurveySummary$Summary[,1]<-c("STPs per simulation","Sites intercepted (freq.)","Sites detected (freq)","STPs intercepting sites (freq.)","Artifacts per STP","Success Rate Index")
   
   colnames(SurveySummary$BySite)<-c("#SurveyHits","#TotalSurveys","#SitesFound",
                                     "#TotalSites","%SitesFound","%SurveyFind",
@@ -252,10 +252,10 @@ surveySimShiny<-function(SurveyParameters, artifact.analysis=TRUE, plot=TRUE, pl
 
           }
           
-          #Plot2: here we continue the plot, byt plotting the sites. Artifacts should have been plotted by now above
+          #Plot2: here we continue the plot, by plotting the sites. Artifacts should have been plotted by now above
           if(plot==TRUE & a==simulations){
             
-            #1.Get the angles, x and y to plot the ellypses
+            #1.Get the angles, x and y to plot the ellipsis
             angles<-seq(0,2*pi,length=72)
             
             #x= h + a cos(t)*cos(c)-b*sin(t)*sin(c)
@@ -351,7 +351,7 @@ surveySimShiny<-function(SurveyParameters, artifact.analysis=TRUE, plot=TRUE, pl
   ##SurveysPersim
   SurveySummary$Summary[1,2]<-mean(SurveySummary$BySite[,2])
   
-  ##SitesFound%
+  ##SitesIntercepted
   SurveySummary$Summary[2,2]<-mean(SurveySummary$BySite[,5])
   SurveySummary$Summary[2,3]<-sd(SurveySummary$BySite[,5])
   SurveySummary$Summary[2,4]<-min(SurveySummary$BySite[,5])
@@ -359,7 +359,7 @@ surveySimShiny<-function(SurveyParameters, artifact.analysis=TRUE, plot=TRUE, pl
   SurveySummary$Summary[2,6]<-quantile(SurveySummary$BySite[,5],0.025)
   SurveySummary$Summary[2,7]<-quantile(SurveySummary$BySite[,5],0.975)
   
-  ##SitesFoundon Artifacts%
+  ##SitesDetected
   SurveySummary$Summary[3,2]<-mean(SurveySummary$ByArtifact[,5])
   SurveySummary$Summary[3,3]<-sd(SurveySummary$ByArtifact[,5])
   SurveySummary$Summary[3,4]<-min(SurveySummary$ByArtifact[,5])
@@ -367,21 +367,29 @@ surveySimShiny<-function(SurveyParameters, artifact.analysis=TRUE, plot=TRUE, pl
   SurveySummary$Summary[3,6]<-quantile(SurveySummary$ByArtifact[,5],0.025)
   SurveySummary$Summary[3,7]<-quantile(SurveySummary$ByArtifact[,5],0.975)
   
-  ##ArtifactsPerSurvey
-  SurveySummary$Summary[4,2]<-mean(SurveySummary$ByArtifact[,2])
-  SurveySummary$Summary[4,3]<-sd(SurveySummary$ByArtifact[,2])
-  SurveySummary$Summary[4,4]<-min(SurveySummary$ByArtifact[,2])
-  SurveySummary$Summary[4,5]<-max(SurveySummary$ByArtifact[,2])
-  SurveySummary$Summary[4,6]<-quantile(SurveySummary$ByArtifact[,2],0.025)
-  SurveySummary$Summary[4,7]<-quantile(SurveySummary$ByArtifact[,2],0.975)
+  ##STPsIntercepting sites
+  SurveySummary$Summary[4,2]<-mean(SurveySummary$BySite[,6])
+  SurveySummary$Summary[4,3]<-sd(SurveySummary$BySite[,6])
+  SurveySummary$Summary[4,4]<-min(SurveySummary$BySite[,6])
+  SurveySummary$Summary[4,5]<-max(SurveySummary$BySite[,6])
+  SurveySummary$Summary[4,6]<-quantile(SurveySummary$BySite[,6],0.025)
+  SurveySummary$Summary[4,7]<-quantile(SurveySummary$BySite[,6],0.975)
+  
+  ##ArtifactsPerSTP
+  SurveySummary$Summary[5,2]<-mean(SurveySummary$ByArtifact[,2])
+  SurveySummary$Summary[5,3]<-sd(SurveySummary$ByArtifact[,2])
+  SurveySummary$Summary[5,4]<-min(SurveySummary$ByArtifact[,2])
+  SurveySummary$Summary[5,5]<-max(SurveySummary$ByArtifact[,2])
+  SurveySummary$Summary[5,6]<-quantile(SurveySummary$ByArtifact[,2],0.025)
+  SurveySummary$Summary[5,7]<-quantile(SurveySummary$ByArtifact[,2],0.975)
   
   ##SuccessRateIndex
-  SurveySummary$Summary[5,2]<-mean(SurveySummary$BySite[,10])
-  SurveySummary$Summary[5,3]<-sd(SurveySummary$BySite[,10])
-  SurveySummary$Summary[5,4]<-min(SurveySummary$BySite[,10])
-  SurveySummary$Summary[5,5]<-max(SurveySummary$BySite[,10])
-  SurveySummary$Summary[5,6]<-quantile(SurveySummary$BySite[,10],0.025)
-  SurveySummary$Summary[5,7]<-quantile(SurveySummary$BySite[,10],0.975)
+  SurveySummary$Summary[6,2]<-mean(SurveySummary$BySite[,10])
+  SurveySummary$Summary[6,3]<-sd(SurveySummary$BySite[,10])
+  SurveySummary$Summary[6,4]<-min(SurveySummary$BySite[,10])
+  SurveySummary$Summary[6,5]<-max(SurveySummary$BySite[,10])
+  SurveySummary$Summary[6,6]<-quantile(SurveySummary$BySite[,10],0.025)
+  SurveySummary$Summary[6,7]<-quantile(SurveySummary$BySite[,10],0.975)
 
   return(SurveySummary)
 }

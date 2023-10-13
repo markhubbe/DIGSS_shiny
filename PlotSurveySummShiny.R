@@ -46,7 +46,7 @@ plotSurveySummShiny<-function(SummaryList,plot="sites.found",labels=NULL){
   if(plot=="sites.found"){
     targetmatrix=2
     targetcol=5
-    MainTitle="Frequency of sites discovered"
+    MainTitle="Frequency of sites intercepted"
     colorscale="magma"
     color.min=0
     color.max=0.7
@@ -55,7 +55,7 @@ plotSurveySummShiny<-function(SummaryList,plot="sites.found",labels=NULL){
   if(plot=="survey.hits"){
     targetmatrix=2
     targetcol=6
-    MainTitle="Frequency of surveys that located sites"
+    MainTitle="Frequency of STPs that intercepted sites"
     colorscale="inferno"
     color.min=0.3
     color.max=1
@@ -64,7 +64,7 @@ plotSurveySummShiny<-function(SummaryList,plot="sites.found",labels=NULL){
   if(plot=="success.rate.index"){
     targetmatrix=2
     targetcol=10
-    MainTitle="Survey Success Rate Index"
+    MainTitle="STP Success Rate Index"
     colorscale="plasma"
     color.min=0
     color.max=1
@@ -73,7 +73,7 @@ plotSurveySummShiny<-function(SummaryList,plot="sites.found",labels=NULL){
   if(plot=="sites.foundARTI"){
     targetmatrix=3
     targetcol=5
-    MainTitle="Frequency of sites discovered by artifact"
+    MainTitle="Frequency of sites detected"
     colorscale="viridis"
     color.min=0
     color.max=1
@@ -82,7 +82,7 @@ plotSurveySummShiny<-function(SummaryList,plot="sites.found",labels=NULL){
   if(plot=="survey.hitsARTI"){
     targetmatrix=3
     targetcol=6
-    MainTitle="Frequency of surveys that located sites by artifact"
+    MainTitle="Frequency of STPS that detected sites"
     colorscale="cividis"
     color.min=0
     color.max=1
@@ -120,11 +120,18 @@ plotSurveySummShiny<-function(SummaryList,plot="sites.found",labels=NULL){
   plotdata[,1]<-factor(plotdata[,1])
   means[,1]<-factor(means[,1])
   
+  if(plot=="success.rate.index"){
+    breaks=seq(min(plotdata$data),max(plotdata$data),length=11)
+  }else{
+    breaks=seq(0,1,length=11)
+  }
+  
   #3.Create the plot
   ggplot(plotdata,aes(x=data,color=groups,fill=groups))+
-    geom_density(alpha=0.5)+
+    #geom_density(alpha=0.5)+
+    geom_histogram(alpha=0.5, breaks=breaks,position="dodge")+
     geom_vline(data=means,aes(xintercept=mean, color=groups), linetype="dashed", size=1)+
-    xlim(0,ifelse(plot=="success.rate.index",max(plotdata$data),1))+
+    #xlim(-0.05,ifelse(plot=="success.rate.index",max(plotdata$data),1))+
     ggtitle(MainTitle)+
     labs(x=ifelse(plot=="success.rate.index","Success Rate Index","frequency"),
          color = "Summaries",fill="Summaries")+

@@ -75,7 +75,7 @@ ui <- fluidPage(
                                                "?",
                                                tags$span(class="tooltiptext",
                                                          HTML("<strong>Grid type: </strong> <br> 
-                                    Type of survey grid to be superimposed on the survey area."))
+                                    Type of STP grid to be superimposed on the survey area."))
                                     
                                       )
                               ),
@@ -87,19 +87,19 @@ ui <- fluidPage(
                                                "?",
                                                tags$span(class="tooltiptext",
                                                          HTML("<strong>Column width: </strong> <br> 
-                                                                The space between survey columns in the grid IN METERS"))
+                                                                The space between STP columns in the grid IN METERS"))
                                                
                                       )
                               ),
                               tags$td(tags$div(style ="display: inline-block", 
-                                               numericInput("survey_radius","Survey radius (m)",0.5,min=0, width="100%")
+                                               numericInput("survey_radius","STP radius (m)",0.5,min=0, width="100%")
                               )),
                               tags$td(style = "padding-left:3px",
                                       tags$div(class="tooltip2",
                                                "?",
                                                tags$span(class="tooltiptext",
-                                                         HTML("<strong>Survey radius: </strong> <br> 
-                                                                The radius IN METERS of the survey pit (assumed to be a circle)."))
+                                                         HTML("<strong>STP radius: </strong> <br> 
+                                                                The radius IN METERS of the STP (assumed to be a circle)."))
                                                
                                       )
                               )
@@ -173,7 +173,7 @@ ui <- fluidPage(
                             tags$tr(
                               tags$td(numericInput("site_area_val","Area",value=5000),min=0),
                               tags$td(numericInput("site_area_mean","Area - mean",value=0),min=0),
-                              tags$td(numericInput("site_area_sd","Area - st dev",value=0),min=0),
+                              tags$td(numericInput("site_area_sd","Area - st. dev.",value=0),min=0),
                               tags$td(numericInput("site_area_min","Area - min",value=0),min=0),
                               tags$td(numericInput("site_area_max","Area - max",value=0),min=0)
                             )
@@ -274,11 +274,11 @@ ui <- fluidPage(
                                        
                                        
                               )),
-                              tags$td(selectInput("summ_plot","Plot density for:",c("Sites found"="sites.found",
-                                                                                    "Survey hits"="survey.hits", 
-                                                                                    "Success Rate"="success.rate.index", 
-                                                                                    "Sites found on artif."="sites.foundARTI",
-                                                                                    "Survey with artifacts"="survey.hitsARTI"))
+                              tags$td(selectInput("summ_plot","Plot density for:",c("Sites intercepted"="sites.found",
+                                                                                    "Sites detected"="sites.foundARTI",
+                                                                                    "STPs intersecting sites"="survey.hits", 
+                                                                                    "Success Rate index"="success.rate.index", 
+                                                                                    "STPs detecting sites"="survey.hitsARTI"))
                               )
                             )
                  )
@@ -291,8 +291,8 @@ ui <- fluidPage(
                  tags$tbody(align = "center",
                             tags$tr(
                               tags$td(tags$div(style ="display: inline-block", 
-                                               selectInput("loop_variable","Chose parameter to loop:",
-                                                           c("column width", "grid type","simulations","survey area","site density - constant","site density - range", "site area - constant","site area - range","site overlap","artifact density - const.","artifact density - range", "artifact distribution","survey radius"),
+                                               selectInput("loop_variable","Choose parameter to loop:",
+                                                           c("column width", "grid type","simulations","survey area","site density - constant","site density - range", "site area - constant","site area - range","site overlap","artifact density - const.","artifact density - range", "artifact distribution","STP radius"),
                                                            width="200px")
                               ),
                               
@@ -328,7 +328,7 @@ ui <- fluidPage(
 
                                                         <i>Artifact distribution</i>: vector of names of artifact distribution<br>
 
-                                                        <i>Survey radius</i>: vector with varying survey radii"))
+                                                        <i>STP radius</i>: vector with varying STP radii"))
                               )
                               ),
                               tags$td(actionButton("loop_run", "Run loops"))
@@ -343,11 +343,11 @@ ui <- fluidPage(
                             ),
                             tags$tr(
                               tags$td(),
-                              tags$td(selectInput("loop_plot","Plot results for:",c("Sites found"="SitesFound",
-                                                                                    "Sites found on artif."="SitesFoundOnArtifacts",
-                                                                                    "Artifacts per survey"="ArtifactsPerSurvey",
-                                                                                    "Surveys per simulation"="SurveysPerSim", 
-                                                                                    "Success rate"="SuccessRateIndex"))
+                              tags$td(selectInput("loop_plot","Plot results for:",c("Sites intercepted"="SitesFound",
+                                                                                    "Sites detected"="SitesFoundOnArtifacts",
+                                                                                    "Artifacts per STP"="ArtifactsPerSurvey",
+                                                                                    "STP per simulation"="SurveysPerSim", 
+                                                                                    "Success Rate Index"="SuccessRateIndex"))
                               )
                               
                             )
@@ -387,7 +387,7 @@ ui <- fluidPage(
 )
 # Define server: session is required to update text labels
 server <- function(input, output, session) {
-  #lock dowload options unless results exist
+  #lock download options unless results exist
   shinyjs::disable("dwld_table")
   shinyjs::disable("dwld_table_loop")
  
@@ -582,8 +582,8 @@ server <- function(input, output, session) {
       shinyjs::disable("loopv3")
       shinyjs::disable("loopv4")
       
-    }else if(x=="survey radius"){
-      updateTextInput(session,"loopv1",label = "Vector of surface radii:")
+    }else if(x=="STP radius"){
+      updateTextInput(session,"loopv1",label = "Vector of STP radii:")
       updateTextInput(session,"loopv2",label = "")
       updateTextInput(session,"loopv3",label = "")
       updateTextInput(session,"loopv4",label = "")
@@ -600,7 +600,7 @@ server <- function(input, output, session) {
   observeEvent(input$grid_type,{
     if(input$grid_type=="rectangle" | input$grid_type=="arbitrary"){
       showModal(modalDialog(
-        numericInput("grid_ratio","Input the length to width ratio of survey grid",value=1),
+        numericInput("grid_ratio","Input the length to width ratio of STP grid",value=1),
         size="s",
         
         footer = tagList(
@@ -639,9 +639,9 @@ server <- function(input, output, session) {
     
     output$sitemap<-renderPlot(replayPlot(survey_results$plot),width=600,height=600)
     
-    output$surveys_txt<-renderText(paste("Surveys per simulation:",survey_results$Summary[1,2]))
+    output$surveys_txt<-renderText(paste("STPs per simulation:",survey_results$Summary[1,2]))
     
-    output$summary<-renderTable(survey_results$Summary[2:5,])
+    output$summary<-renderTable(survey_results$Summary[2:6,])
     
     output$summary_plot<-renderPlot(plotSurveySummShiny(list(survey_results),input$summ_plot,labels = results_labels[sims_done]))
     
@@ -651,7 +651,7 @@ server <- function(input, output, session) {
     summ_table[1,]<-c("Survey area:",paste(survey_results[[4]]$Area[1],"x",survey_results[[4]]$Area[2],"km"))
     summ_table[2,]<-c("Grid type:",input$grid_type)
     summ_table[3,]<-c("Column width:",survey_results[[4]]$col.width)
-    summ_table[4,]<-c("Survey radius:",survey_results[[4]]$survey.radius)
+    summ_table[4,]<-c("STP radius:",survey_results[[4]]$survey.radius)
     if(input$dens_choice == "single value"){
       summ_table[5,]<-c("Site density:",survey_results[[4]]$site.density)
     }else{
@@ -734,7 +734,7 @@ server <- function(input, output, session) {
      
     if(input$loop_variable=="column width"){
       loop_pars<-string2vector(input$loopv1)
-      x_lab<<-"Survey column width in each iteration"
+      x_lab<<-"STP column width in each iteration"
       loop_var<-"col.width"
       
       RunLoop(SurveyParameters,loop_var,loop_pars,grid_ratio=NULL)
@@ -761,14 +761,14 @@ server <- function(input, output, session) {
       
     }else if(input$loop_variable=="simulations"){
       loop_pars<-string2vector(input$loopv1)
-      x_lab<<-"Number of simulation in each iteration"
+      x_lab<<-"Number of simulations in each iteration"
       loop_var<-"simulations"
       
       RunLoop(SurveyParameters,loop_var,loop_pars,grid_ratio=NULL)
       
     }else if(input$loop_variable=="survey area"){
       loop_pars<-string2vector(input$loopv1)
-      x_lab<<-"Survey area  in each iteration"
+      x_lab<<-"Survey area in each iteration"
       loop_var<-"area"
       
       RunLoop(SurveyParameters,loop_var,loop_pars,grid_ratio=NULL)
@@ -837,9 +837,9 @@ server <- function(input, output, session) {
       
       RunLoop(SurveyParameters,loop_var,loop_pars,grid_ratio=NULL)
       
-    }else if(input$loop_variable=="survey radius"){
+    }else if(input$loop_variable=="STP radius"){
       loop_pars<-string2vector(input$loopv1)
-      x_lab<<-"Survey radius in each iteration"
+      x_lab<<-"STP radius in each iteration"
       loop_var<-"survey.radius"
       
       RunLoop(SurveyParameters,loop_var,loop_pars,grid_ratio=NULL) 
@@ -874,7 +874,7 @@ server <- function(input, output, session) {
       xlab(x_lab)+
       theme_minimal()
     
-    output$loop_txt<-renderText("Sites found in each iteration:")
+    output$loop_txt<-renderText("Sites intercepted in each iteration:")
     output$loop_summary<-renderTable(loop_results$SitesFound)
     output$loop_result_plot<-renderPlot(p)
   }
@@ -924,7 +924,7 @@ server <- function(input, output, session) {
       fill_palette<-viridis(5,alpha = 0.5)
       
       if(input$loop_plot=="SitesFound"){
-        output$loop_txt<-renderText("Sites found in each iteration:")
+        output$loop_txt<-renderText("Sites intercepted in each iteration:")
         output$loop_summary<-renderTable(loop_results$SitesFound)
         
         #plot
@@ -942,7 +942,7 @@ server <- function(input, output, session) {
           theme_minimal()
       }
       else if(input$loop_plot=="SitesFoundOnArtifacts"){
-        output$loop_txt<-renderText("Sites found based on artifacts in each iteration:")
+        output$loop_txt<-renderText("Frequency of sites detected in each iteration:")
         output$loop_summary<-renderTable(loop_results$SitesFoundOnArtifacts)
         
         #plot
@@ -960,7 +960,7 @@ server <- function(input, output, session) {
           theme_minimal()
       }
       else if(input$loop_plot=="ArtifactsPerSurvey"){
-        output$loop_txt<-renderText("Artifacts per survey in each iteration:")
+        output$loop_txt<-renderText("Number of artifacts per STP in each iteration:")
         output$loop_summary<-renderTable(loop_results$ArtifactsPerSurvey)
         
         #plot
@@ -996,7 +996,7 @@ server <- function(input, output, session) {
           theme_minimal()
       }
       else if(input$loop_plot=="SurveysPerSim"){
-        output$loop_txt<-renderText("Surveys in each iteration:")
+        output$loop_txt<-renderText("Number of STPs in each iteration:")
         output$loop_summary<-renderTable(loop_results$SurveysPerSim)
         
         tmp<-loop_results$SurveysPerSim
